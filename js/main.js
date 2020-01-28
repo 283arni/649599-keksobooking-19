@@ -4,7 +4,6 @@ var QUANTITY_ADS = 8;
 
 var map = document.querySelector('.map');
 var mapPins = document.querySelector('.map__pins');
-var pin = document.querySelector('.map__pin');
 var widthMap = parseInt(getComputedStyle(mapPins).width, 10);
 
 map.classList.remove('map--faded');
@@ -32,7 +31,7 @@ var randomCoordY = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-var creatObjects = function() {
+var creatObjects = function () {
 
   var ads = [];
   var titlesAds = ['Лучшая квартира', 'Квартира с хорошим видом', 'Сдаю жилье', 'Со всеми удобствами', 'Отель "У Кекса"', 'Гостевой дом"Васаби"', 'Отель "Самурай"', 'Улей'];
