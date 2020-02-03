@@ -1,13 +1,54 @@
 'use strict';
 
 var QUANTITY_ADS = 8;
-
+var LIFT_KEY_MOUSE = 1;
+var KEY_ENTER = 'Enter';
 var map = document.querySelector('.map');
 var mapPins = document.querySelector('.map__pins');
 var widthMap = parseInt(getComputedStyle(mapPins).width, 10);
-var mapFilters = document.querySelector('.map__filters-container');
+var mapFiltersBlock = map.querySelector('.map__filters-container');
+var mapFilters = mapFiltersBlock.querySelectorAll('.map__filter');
+var form = document.querySelector('.ad-form');
+var fields = document.querySelectorAll('fieldset');
+var mainPin = mapPins.querySelector('.map__pin--main');
 
-map.classList.remove('map--faded');
+// События
+
+var disableFields = function (elems) {
+  for (var i = 0; i < elems.length; i++) {
+    elems[i].setAttribute('disabled', 'true');
+  }
+};
+
+var activeFields = function (elems) {
+  for (var i = 0; i < elems.length; i++) {
+    elems[i].removeAttribute('disabled');
+  }
+};
+
+var openMap = function () {
+  activeFields(fields);
+  activeFields(mapFilters);
+  map.classList.remove('map--faded');
+  form.classList.remove('ad-form--disabled');
+};
+
+window.addEventListener('load', function () {
+  disableFields(fields);
+  disableFields(mapFilters);
+});
+
+mainPin.addEventListener('mousedown', function (e) {
+  if (e.which === LIFT_KEY_MOUSE) {
+    openMap();
+  }
+});
+
+mainPin.addEventListener('keydown', function (e) {
+  if (e.key === KEY_ENTER) {
+    openMap();
+  }
+});
 
 var randomItem = function (arr) {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -78,30 +119,30 @@ var createObjects = function () {
 
 var arr = createObjects();
 
-var renderPins = function () {
+// var renderPins = function () {
 
-  var template = document.querySelector('#pin').content.querySelector('.map__pin');
-  var fragment = document.createDocumentFragment();
-  var offsetX = 25;
-  var offsetY = 70;
+//   var template = document.querySelector('#pin').content.querySelector('.map__pin');
+//   var fragment = document.createDocumentFragment();
+//   var offsetX = 25;
+//   var offsetY = 70;
 
-  for (var i = 0; i < QUANTITY_ADS; i++) {
+//   for (var i = 0; i < QUANTITY_ADS; i++) {
 
-    var elem = template.cloneNode(true);
-    var img = elem.querySelector('img');
-    var coords = 'left: ' + (arr[i].location.x - offsetX) + 'px; top:' + (arr[i].location.y - offsetY) + 'px;';
+//     var elem = template.cloneNode(true);
+//     var img = elem.querySelector('img');
+//     var coords = 'left: ' + (arr[i].location.x - offsetX) + 'px; top:' + (arr[i].location.y - offsetY) + 'px;';
 
-    elem.setAttribute('style', coords);
-    img.setAttribute('src', arr[i].author.avatar);
-    img.setAttribute('alt', arr[i].offer.title);
+//     elem.setAttribute('style', coords);
+//     img.setAttribute('src', arr[i].author.avatar);
+//     img.setAttribute('alt', arr[i].offer.title);
 
-    fragment.append(elem);
-  }
+//     fragment.append(elem);
+//   }
 
-  return fragment;
-};
+//   return fragment;
+// };
 
-mapPins.append(renderPins());
+// mapPins.append(renderPins());
 
 var chooseType = function (type) {
 
@@ -133,67 +174,67 @@ var checkGuests = function (rooms, guests) {
   return rooms + ' комнаты для ' + guests + ' гостей';
 };
 
-var createFeatures = function (namesFeatures) {
+// var createFeatures = function (namesFeatures) {
 
-  var fragment = document.createDocumentFragment();
+//   var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < namesFeatures.length; i++) {
-    var elem = document.createElement('li');
-    elem.classList.add('popup__feature', 'popup__feature--' + namesFeatures[i]);
-    elem.textContent = namesFeatures[i];
-    fragment.append(elem);
-  }
+//   for (var i = 0; i < namesFeatures.length; i++) {
+//     var elem = document.createElement('li');
+//     elem.classList.add('popup__feature', 'popup__feature--' + namesFeatures[i]);
+//     elem.textContent = namesFeatures[i];
+//     fragment.append(elem);
+//   }
 
-  return fragment;
-};
+//   return fragment;
+// };
 
-var addPhoto = function (elem, photos) {
+// var addPhoto = function (elem, photos) {
 
-  var fragment = document.createDocumentFragment();
+//   var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < photos.length; i++) {
-    var elemClone = elem.cloneNode();
-    elemClone.setAttribute('src', photos[i]);
-    fragment.append(elemClone);
-  }
+//   for (var i = 0; i < photos.length; i++) {
+//     var elemClone = elem.cloneNode();
+//     elemClone.setAttribute('src', photos[i]);
+//     fragment.append(elemClone);
+//   }
 
-  return fragment;
-};
+//   return fragment;
+// };
 
 
-var createCards = function () {
+// var createCards = function () {
 
-  var temolateCard = document.querySelector('#card').content.querySelector('.map__card');
-  var fragment = document.createDocumentFragment();
+//   var temolateCard = document.querySelector('#card').content.querySelector('.map__card');
+//   var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < QUANTITY_ADS; i++) {
-    var elemCard = temolateCard.cloneNode(true);
-    var elemCardTitle = elemCard.querySelector('.popup__title');
-    var elemCardAddress = elemCard.querySelector('.popup__text--address');
-    var elemCardPrice = elemCard.querySelector('.popup__text--price');
-    var elemCardType = elemCard.querySelector('.popup__type');
-    var elemCardAccommodate = elemCard.querySelector('.popup__text--capacity');
-    var elemCardTime = elemCard.querySelector('.popup__text--time');
-    var elemCardFeatures = elemCard.querySelector('.popup__features');
-    var elemCardFeaturesClone = elemCardFeatures.cloneNode();
-    var elemCardDescription = elemCard.querySelector('.popup__description');
-    var elemCardPhoto = elemCard.querySelector('.popup__photo');
+//   for (var i = 0; i < QUANTITY_ADS; i++) {
+//     var elemCard = temolateCard.cloneNode(true);
+//     var elemCardTitle = elemCard.querySelector('.popup__title');
+//     var elemCardAddress = elemCard.querySelector('.popup__text--address');
+//     var elemCardPrice = elemCard.querySelector('.popup__text--price');
+//     var elemCardType = elemCard.querySelector('.popup__type');
+//     var elemCardAccommodate = elemCard.querySelector('.popup__text--capacity');
+//     var elemCardTime = elemCard.querySelector('.popup__text--time');
+//     var elemCardFeatures = elemCard.querySelector('.popup__features');
+//     var elemCardFeaturesClone = elemCardFeatures.cloneNode();
+//     var elemCardDescription = elemCard.querySelector('.popup__description');
+//     var elemCardPhoto = elemCard.querySelector('.popup__photo');
 
-    elemCardTitle.textContent = arr[i].offer.title;
-    elemCardAddress.textContent = arr[i].offer.address;
-    elemCardPrice.innerHTML = arr[i].offer.price + ' &#x20bd;<span>/ночь</span>';
-    elemCardType.textContent = chooseType(arr[i].offer.type);
-    elemCardAccommodate.textContent = checkGuests(arr[i].offer.rooms, arr[i].offer.guests);
-    elemCardTime.textContent = 'Заезд после ' + arr[i].offer.checkin + ', выезд до ' + arr[i].offer.checkout;
-    elemCardFeaturesClone.append(createFeatures(arr[i].offer.features));
-    elemCardFeatures.replaceWith(elemCardFeaturesClone);
-    elemCardDescription.textContent = arr[i].offer.description;
-    elemCardPhoto.replaceWith(addPhoto(elemCardPhoto, arr[i].offer.photos));
+//     elemCardTitle.textContent = arr[i].offer.title;
+//     elemCardAddress.textContent = arr[i].offer.address;
+//     elemCardPrice.innerHTML = arr[i].offer.price + ' &#x20bd;<span>/ночь</span>';
+//     elemCardType.textContent = chooseType(arr[i].offer.type);
+//     elemCardAccommodate.textContent = checkGuests(arr[i].offer.rooms, arr[i].offer.guests);
+//     elemCardTime.textContent = 'Заезд после ' + arr[i].offer.checkin + ', выезд до ' + arr[i].offer.checkout;
+//     elemCardFeaturesClone.append(createFeatures(arr[i].offer.features));
+//     elemCardFeatures.replaceWith(elemCardFeaturesClone);
+//     elemCardDescription.textContent = arr[i].offer.description;
+//     elemCardPhoto.replaceWith(addPhoto(elemCardPhoto, arr[i].offer.photos));
 
-    fragment.append(elemCard);
-  }
+//     fragment.append(elemCard);
+//   }
 
-  return fragment;
-};
+//   return fragment;
+// };
 
-mapFilters.before(createCards());
+// mapFiltersBlock.before(createCards());
