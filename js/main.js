@@ -3,14 +3,19 @@
 var QUANTITY_ADS = 8;
 var LIFT_KEY_MOUSE = 1;
 var KEY_ENTER = 'Enter';
+
 var map = document.querySelector('.map');
 var mapPins = document.querySelector('.map__pins');
 var widthMap = parseInt(getComputedStyle(mapPins).width, 10);
 var mapFiltersBlock = map.querySelector('.map__filters-container');
 var mapFilters = mapFiltersBlock.querySelectorAll('.map__filter');
 var form = document.querySelector('.ad-form');
+var addressInput = form.querySelector('#address');
 var fields = document.querySelectorAll('fieldset');
 var mainPin = mapPins.querySelector('.map__pin--main');
+var quantityRooms = form.querySelector('#room_number');
+var capacity = form.querySelector('#capacity');
+var btnSubmit = form.querySelector('.ad-form__submit');
 
 // События
 
@@ -31,6 +36,25 @@ var openMap = function () {
   activeFields(mapFilters);
   map.classList.remove('map--faded');
   form.classList.remove('ad-form--disabled');
+  addressInput.value = findCoordsMainPin();
+};
+
+var findCoordsMainPin = function () {
+  var x = Math.floor(parseInt(mainPin.style.left, 10) + parseInt(getComputedStyle(mainPin).width, 10) / 2);
+  var y = Math.floor(parseInt(mainPin.style.top, 10) + parseInt(getComputedStyle(mainPin).height, 10));
+  var elemAfterHeight = parseInt(getComputedStyle(mainPin, ':after').height, 10);
+  return x + ', ' + (y + elemAfterHeight);
+};
+
+var valid = function () {
+  if (quantityRooms.value === '1' && capacity.value !== '1') {
+    capacity.setCustomValidity('sdnhkjashdjs')
+  }
+
+  if (quantityRooms.value === '2' && (capacity.value !== '1' || capacity.value !== '2')) {
+    capacity.setCustomValidity('s------')
+  }
+
 };
 
 window.addEventListener('load', function () {
@@ -50,6 +74,9 @@ mainPin.addEventListener('keydown', function (e) {
   }
 });
 
+form.addEventListener('change', function (e) {
+
+});
 var randomItem = function (arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 };
