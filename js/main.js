@@ -15,7 +15,6 @@ var fields = document.querySelectorAll('fieldset');
 var mainPin = mapPins.querySelector('.map__pin--main');
 var quantityRooms = form.querySelector('#room_number');
 var capacity = form.querySelector('#capacity');
-var btnSubmit = form.querySelector('.ad-form__submit');
 
 // События
 
@@ -36,6 +35,7 @@ var openMap = function () {
   activeFields(mapFilters);
   map.classList.remove('map--faded');
   form.classList.remove('ad-form--disabled');
+  mapPins.append(renderPins());
   addressInput.value = findCoordsMainPin();
 };
 
@@ -46,15 +46,21 @@ var findCoordsMainPin = function () {
   return x + ', ' + (y + elemAfterHeight);
 };
 
-var valid = function () {
-  if (quantityRooms.value === '1' && capacity.value !== '1') {
-    capacity.setCustomValidity('sdnhkjashdjs')
+var validation = function () {
+  if (quantityRooms.value === '1' && capacity.value === '1') {
+    capacity.style.border = '2px solid green';
+  } else if (quantityRooms.value === '2' && (capacity.value === '1' || capacity.value === '2')) {
+    capacity.style.border = '2px solid green';
+  } else if (quantityRooms.value === '3' && (capacity.value === '1' || capacity.value === '2' || capacity.value === '3')) {
+    capacity.style.border = '2px solid green';
+  } else if (quantityRooms.value === '100' && (capacity.value === '0')) {
+    capacity.style.border = '2px solid green';
+  } else {
+    capacity.style.border = '3px solid red';
+    return false;
   }
 
-  if (quantityRooms.value === '2' && (capacity.value !== '1' || capacity.value !== '2')) {
-    capacity.setCustomValidity('s------')
-  }
-
+  return true;
 };
 
 window.addEventListener('load', function () {
@@ -74,9 +80,19 @@ mainPin.addEventListener('keydown', function (e) {
   }
 });
 
-form.addEventListener('change', function (e) {
+form.addEventListener('change', function () {
+  validation();
+});
+
+form.addEventListener('submit', function (e) {
+  if (!validation()) {
+    e.preventDefault();
+  }
 
 });
+
+//
+
 var randomItem = function (arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 };
@@ -146,60 +162,58 @@ var createObjects = function () {
 
 var arr = createObjects();
 
-// var renderPins = function () {
+var renderPins = function () {
 
-//   var template = document.querySelector('#pin').content.querySelector('.map__pin');
-//   var fragment = document.createDocumentFragment();
-//   var offsetX = 25;
-//   var offsetY = 70;
+  var template = document.querySelector('#pin').content.querySelector('.map__pin');
+  var fragment = document.createDocumentFragment();
+  var offsetX = 25;
+  var offsetY = 70;
 
-//   for (var i = 0; i < QUANTITY_ADS; i++) {
+  for (var i = 0; i < QUANTITY_ADS; i++) {
 
-//     var elem = template.cloneNode(true);
-//     var img = elem.querySelector('img');
-//     var coords = 'left: ' + (arr[i].location.x - offsetX) + 'px; top:' + (arr[i].location.y - offsetY) + 'px;';
+    var elem = template.cloneNode(true);
+    var img = elem.querySelector('img');
+    var coords = 'left: ' + (arr[i].location.x - offsetX) + 'px; top:' + (arr[i].location.y - offsetY) + 'px;';
 
-//     elem.setAttribute('style', coords);
-//     img.setAttribute('src', arr[i].author.avatar);
-//     img.setAttribute('alt', arr[i].offer.title);
+    elem.setAttribute('style', coords);
+    img.setAttribute('src', arr[i].author.avatar);
+    img.setAttribute('alt', arr[i].offer.title);
 
-//     fragment.append(elem);
+    fragment.append(elem);
+  }
+
+  return fragment;
+};
+
+// var chooseType = function (type) {
+
+//   switch (type) {
+//     case 'palace':
+//       type = 'Дворец';
+//       break;
+//     case 'flat':
+//       type = 'Квартира';
+//       break;
+//     case 'bungalo':
+//       type = 'Бунгало';
+//       break;
+//     case 'house':
+//       type = 'Дом';
 //   }
 
-//   return fragment;
+//   return type;
 // };
 
-// mapPins.append(renderPins());
+// var checkGuests = function (rooms, guests) {
 
-var chooseType = function (type) {
+//   if (rooms === 1) {
+//     return rooms + ' комната для ' + guests + ' гостей';
+//   } else if (rooms === 5) {
+//     return rooms + ' комнат для ' + guests + ' гостей';
+//   }
 
-  switch (type) {
-    case 'palace':
-      type = 'Дворец';
-      break;
-    case 'flat':
-      type = 'Квартира';
-      break;
-    case 'bungalo':
-      type = 'Бунгало';
-      break;
-    case 'house':
-      type = 'Дом';
-  }
-
-  return type;
-};
-
-var checkGuests = function (rooms, guests) {
-
-  if (rooms === 1) {
-    return rooms + ' комната для ' + guests + ' гостей';
-  } else if (rooms === 5) {
-    return rooms + ' комнат для ' + guests + ' гостей';
-  }
-
-  return rooms + ' комнаты для ' + guests + ' гостей';
-};
+//   return rooms + ' комнаты для ' + guests + ' гостей';
+// };
 
 // var createFeatures = function (namesFeatures) {
 
