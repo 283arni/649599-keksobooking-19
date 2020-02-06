@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  var LIFT_KEY_MOUSE = 1;
   var KEY_ENTER = 'Enter';
   var KEY_ESC = 'Escape';
 
@@ -11,7 +10,6 @@
   var mapFiltersBlock = map.querySelector('.map__filters-container');
   var mapFilters = mapFiltersBlock.querySelectorAll('.map__filter');
   var form = document.querySelector('.ad-form');
-  var addressInput = form.querySelector('#address');
   var fields = document.querySelectorAll('fieldset');
   var mainPin = mapPins.querySelector('.map__pin--main');
 
@@ -35,7 +33,7 @@
       map.classList.remove('map--faded');
       form.classList.remove('ad-form--disabled');
       mapPins.append(window.pins.renderPins);
-      addressInput.value = findCoordsMainPin();
+
 
       var btnPins = mapPins.querySelectorAll('.map__pin[type="button"]');
 
@@ -83,23 +81,9 @@
     });
   };
 
-  var findCoordsMainPin = function () {
-    var x = Math.floor(parseInt(mainPin.style.left, 10) + parseInt(getComputedStyle(mainPin).width, 10) / 2);
-    var y = Math.floor(parseInt(mainPin.style.top, 10) + parseInt(getComputedStyle(mainPin).height, 10));
-    var elemAfterHeight = parseInt(getComputedStyle(mainPin, ':after').height, 10);
-    return x + ', ' + (y + elemAfterHeight);
-  };
-
-
   window.addEventListener('load', function () {
     disableFields(fields);
     disableFields(mapFilters);
-  });
-
-  mainPin.addEventListener('mousedown', function (e) {
-    if (e.which === LIFT_KEY_MOUSE) {
-      openMap();
-    }
   });
 
   mainPin.addEventListener('keydown', function (e) {
@@ -107,4 +91,9 @@
       openMap();
     }
   });
+
+  window.map = {
+    openMap: openMap
+  };
+
 })();
