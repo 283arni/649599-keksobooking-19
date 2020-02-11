@@ -2,6 +2,7 @@
 'use strict';
 
 (function () {
+
   var QUANTITY_ADS = 8;
 
   var mapPins = document.querySelector('.map__pins');

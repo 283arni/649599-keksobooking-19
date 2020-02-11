@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var LIFT_KEY_MOUSE = 1;
+
   var NON_SHIFT = 0;
   var STOP_TOP_MOVE = 130;
   var STOP_BOTTOM_MOVE = 630;
@@ -11,10 +11,7 @@
   var addressInput = document.querySelector('#address');
   var shift;
 
-  mainPin.addEventListener('mousedown', function (evt) {
-    if (evt.which === LIFT_KEY_MOUSE) {
-      window.map.openMap();
-    }
+  var onDrag = function (evt) {
 
     var startCoords = {
       x: evt.clientX,
@@ -25,6 +22,7 @@
 
 
     var onMouseMove = function (moveEvt) {
+
       moveEvt.preventDefault();
 
       shift = {
@@ -36,15 +34,18 @@
         x: moveEvt.clientX,
         y: moveEvt.clientY
       };
+
       if (stopMoveY(findCoordsMainPin(shift.x, shift.y)) > STOP_TOP_MOVE && stopMoveY(findCoordsMainPin(shift.x, shift.y)) < STOP_BOTTOM_MOVE) {
         mainPin.style.top = (mainPin.offsetTop - shift.y) + 'px';
       }
+
       mainPin.style.left = (mainPin.offsetLeft - shift.x) + 'px';
       addressInput.value = findCoordsMainPin(shift.x, shift.y);
 
     };
 
     var onMouseUp = function (upEvt) {
+
       upEvt.preventDefault();
 
       mapPins.removeEventListener('mousemove', onMouseMove);
@@ -53,12 +54,14 @@
 
     mapPins.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
-  });
+  };
 
   var findCoordsMainPin = function (shiftX, shiftY) {
+
     var x = Math.floor((mainPin.offsetLeft - shiftX) + parseInt(getComputedStyle(mainPin).width, 10) / 2);
     var y = Math.floor((mainPin.offsetTop - shiftY) + parseInt(getComputedStyle(mainPin).height, 10));
     var elemAfterHeight = parseInt(getComputedStyle(mainPin, ':after').height, 10);
+
     return x + ', ' + (y + elemAfterHeight);
   };
 
@@ -67,6 +70,7 @@
   };
 
   window.drag = {
-    findCoordsMainPin: findCoordsMainPin
+    findCoordsMainPin: findCoordsMainPin,
+    onDrag: onDrag
   };
 })();

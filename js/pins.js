@@ -22,9 +22,11 @@
 
       fragment.append(elem);
     }
+    window.map.openMap();
   };
 
   var onError = function (errorMessage) {
+
     var node = document.createElement('div');
     node.style = 'z-index: 100; background-color: black; color: pink; border: 2px solid pink; transform: translate(-50%); padding: 10px; text-align: center';
     node.style.position = 'fixed';
@@ -37,6 +39,7 @@
   };
 
   var filterError = function (errorMessage) {
+
     switch (errorMessage) {
       case 400:
         errorMessage = 'Bad Request';
@@ -56,12 +59,13 @@
       default:
         errorMessage = 'Неизвестная ошибка';
     }
+
     return 'Произошли проблемы: ' + errorMessage;
   };
 
-  window.request.load(onLoad, onError);
-
   window.pins = {
+    onError: onError,
+    onLoad: onLoad,
     fragment: fragment
   };
 
