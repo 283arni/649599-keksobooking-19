@@ -45,11 +45,11 @@
     window.pins.removePins();
   };
 
-  var watchClickPins = function () {
+  var watchClickPins = function (arr) {
     var btnPins = mapPins.querySelectorAll('.map__pin[type="button"]');
 
     for (var i = 0; i < btnPins.length; i++) {
-      checkBtnOnClick(btnPins[i], window.card.createCard(window.pins.copyPins[i]));
+      checkBtnOnClick(btnPins[i], window.card.createCard(arr[i]));
     }
   };
 

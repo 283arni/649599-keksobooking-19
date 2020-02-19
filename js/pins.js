@@ -30,6 +30,7 @@
 
 
   var renderPins = function (arr) {
+
     var fragment = document.createDocumentFragment();
     var template = document.querySelector('#pin').content.querySelector('.map__pin');
     var offsetX = 25;
@@ -51,8 +52,9 @@
 
       fragment.append(elem);
     }
+
     mapPins.append(fragment);
-    window.map.watchClickPins();
+    window.map.watchClickPins(arr);
   };
 
   var onLoad = function (list) {
