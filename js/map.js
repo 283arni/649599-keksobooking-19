@@ -4,7 +4,7 @@
 
   var KEY_ENTER = 'Enter';
   var KEY_ESC = 'Escape';
-  var LIFT_KEY_MOUSE = 1;
+
 
   var map = document.querySelector('.map');
   var mapPins = document.querySelector('.map__pins');
@@ -12,7 +12,7 @@
   var mapFilters = mapFiltersBlock.querySelectorAll('.map__filter');
   var form = document.querySelector('.ad-form');
   var fields = document.querySelectorAll('fieldset');
-  var mainPin = mapPins.querySelector('.map__pin--main');
+
 
   var disableFields = function (elems) {
     for (var i = 0; i < elems.length; i++) {
@@ -28,18 +28,12 @@
 
   var openMap = function () {
 
-    if (map.classList.contains('map--faded')) {
-      activeFields(fields);
-      activeFields(mapFilters);
-      map.classList.remove('map--faded');
-      form.classList.remove('ad-form--disabled');
-      mapPins.append(window.pins.fragment);
-      var btnPins = mapPins.querySelectorAll('.map__pin[type="button"]');
+    activeFields(fields);
+    activeFields(mapFilters);
+    map.classList.remove('map--faded');
+    form.classList.remove('ad-form--disabled');
 
-      for (var i = 0; i < btnPins.length; i++) {
-        checkBtnOnClick(btnPins[i], window.card.createCards[i]);
-      }
-    }
+
   };
 
   var closeMap = function () {
@@ -48,11 +42,14 @@
     disableFields(mapFilters);
     map.classList.add('map--faded');
     form.classList.add('ad-form--disabled');
+    window.pins.removePins();
+  };
 
+  var watchClickPins = function (arr) {
     var btnPins = mapPins.querySelectorAll('.map__pin[type="button"]');
 
     for (var i = 0; i < btnPins.length; i++) {
-      btnPins[i].remove();
+      checkBtnOnClick(btnPins[i], window.card.createCard(arr[i]));
     }
   };
 
@@ -101,22 +98,10 @@
     disableFields(mapFilters);
   });
 
-  mainPin.addEventListener('keydown', function (e) {
-    if (e.key === KEY_ENTER) {
-      openMap();
-    }
-  });
-
-  mainPin.addEventListener('mousedown', function (evt) {
-
-    if (evt.which === LIFT_KEY_MOUSE) {
-      window.request.load(window.pins.onLoad, window.pins.onError);
-    }
-    window.drag.onDrag(evt);
-  });
-
   window.map = {
     openMap: openMap,
-    closeMap: closeMap
+    closeMap: closeMap,
+    watchClickPins: watchClickPins,
+    removeOpenIfPopup: removeOpenIfPopup
   };
 })();
