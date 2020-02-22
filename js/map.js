@@ -5,7 +5,6 @@
   var KEY_ENTER = 'Enter';
   var KEY_ESC = 'Escape';
 
-
   var map = document.querySelector('.map');
   var mapPins = document.querySelector('.map__pins');
   var mapFiltersBlock = map.querySelector('.map__filters-container');

@@ -3,6 +3,29 @@
 (function () {
 
   var KEY_ESC = 'Escape';
+  var FILE_FORMATS = ['jpg', 'jpeg', 'png'];
+  var MAX_HEIGHT_IMG = '70px';
+
+  var Fields = {
+    SUCCESS_FIELD: '2px solid green',
+    FAILURE_FIELD: '3px solid red',
+    SIMPLE_FIELD: '1px solid #d9d9d3'
+  };
+
+  var Guests = {
+    NO_GUESTS: '0',
+    ONE_GUEST: '1',
+    TWO_GUESTS: '2',
+    TREE_GUESTS: '3',
+    HUNDRED_GUESTES: '100'
+  };
+
+  var pricesHousing = {
+    'bungalo': '0',
+    'flat': '1000',
+    'house': '5000',
+    'palace': '10000'
+  };
 
   var main = document.querySelector('main');
   var form = document.querySelector('.ad-form');
@@ -15,8 +38,54 @@
   var quantityRooms = form.querySelector('#room_number');
   var capacity = form.querySelector('#capacity');
   var btnReset = form.querySelector('.ad-form__reset');
+  var loaderAvatar = form.querySelector('.ad-form-header__input');
+  var avatar = form.querySelector('.ad-form-header__preview img');
+  var loaderPhotos = form.querySelector('.ad-form__input');
+  var photo = form.querySelector('.ad-form__photo');
   var btnCloseError = messageError.querySelector('.error__button');
 
+  var choiсePhotos = function () {
+    var files = loaderPhotos.files;
+    for (var i = 0; i < files.length; i++) {
+      var fileName = files[i].name.toLowerCase();
+
+      var matches = FILE_FORMATS.some(function (it) {
+        return fileName.endsWith(it);
+      });
+
+      if (matches) {
+        var reader = new FileReader();
+
+        reader.addEventListener('load', function (evt) {
+          var img = document.createElement('img');
+          img.src = evt.target.result;
+          img.style.maxHeight = MAX_HEIGHT_IMG;
+          photo.append(img);
+        });
+
+        reader.readAsDataURL(files[i]);
+      }
+    }
+  };
+
+  var choiсeAvatar = function () {
+    var file = loaderAvatar.files[0];
+    var fileName = file.name.toLowerCase();
+
+    var matches = FILE_FORMATS.some(function (it) {
+      return fileName.endsWith(it);
+    });
+
+    if (matches) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        avatar.src = reader.result;
+      });
+
+      reader.readAsDataURL(file);
+    }
+  };
 
   var onSuccessPress = function (e) {
 
@@ -69,16 +138,16 @@
 
   var validationRoomsWithGuests = function () {
 
-    if (quantityRooms.value === '1' && capacity.value === '1') {
-      capacity.style.border = '2px solid green';
-    } else if (quantityRooms.value === '2' && (capacity.value === '1' || capacity.value === '2')) {
-      capacity.style.border = '2px solid green';
-    } else if (quantityRooms.value === '3' && (capacity.value === '1' || capacity.value === '2' || capacity.value === '3')) {
-      capacity.style.border = '2px solid green';
-    } else if (quantityRooms.value === '100' && (capacity.value === '0')) {
-      capacity.style.border = '2px solid green';
+    if (quantityRooms.value === Guests.ONE_GUEST && capacity.value === Guests.ONE_GUEST) {
+      capacity.style.border = Fields.SUCCESS_FIELD;
+    } else if (quantityRooms.value === Guests.TWO_GUESTS && (capacity.value === Guests.ONE_GUEST || capacity.value === Guests.TWO_GUESTS)) {
+      capacity.style.border = Fields.SUCCESS_FIELD;
+    } else if (quantityRooms.value === Guests.TREE_GUESTS && (capacity.value === Guests.ONE_GUEST || capacity.value === Guests.TWO_GUESTS || capacity.value === Guests.TREE_GUESTS)) {
+      capacity.style.border = Fields.SUCCESS_FIELD;
+    } else if (quantityRooms.value === Guests.HUNDRED_GUESTES && (capacity.value === Guests.NO_GUESTS)) {
+      capacity.style.border = Fields.SUCCESS_FIELD;
     } else {
-      capacity.style.border = '3px solid red';
+      capacity.style.border = Fields.FAILURE_FIELD;
       return false;
     }
 
@@ -86,19 +155,8 @@
   };
 
   var validationTypeHousing = function () {
-
-    if (typeOfHousing.value === 'bungalo') {
-      priceNight.placeholder = 'от 0';
-    } else if (typeOfHousing.value === 'flat') {
-      priceNight.placeholder = 'от 1000';
-      priceNight.setAttribute('min', '1000');
-    } else if (typeOfHousing.value === 'house') {
-      priceNight.placeholder = 'от 5000';
-      priceNight.setAttribute('min', '5000');
-    } else if (typeOfHousing.value === 'palace') {
-      priceNight.placeholder = 'от 10000';
-      priceNight.setAttribute('min', '10000');
-    }
+    priceNight.placeholder = 'от ' + pricesHousing[typeOfHousing.value];
+    priceNight.setAttribute('min', pricesHousing[typeOfHousing.value]);
   };
 
   var timingTime = function (e) {
@@ -109,13 +167,6 @@
       timeoutInput.value = e.target.value;
     }
   };
-
-  form.addEventListener('change', function (e) {
-
-    validationRoomsWithGuests();
-    validationTypeHousing();
-    timingTime(e);
-  });
 
   var onError = function () {
 
@@ -128,7 +179,7 @@
 
   var onLoad = function () {
 
-    capacity.style.border = '1px solid #d9d9d3';
+    capacity.style.border = Fields.SIMPLE_FIELD;
     form.reset();
     window.map.closeMap();
 
@@ -136,6 +187,20 @@
     messageSuccess.addEventListener('click', onSuccessClick);
     document.addEventListener('keydown', onSuccessPress);
   };
+
+  form.addEventListener('change', function (e) {
+    validationRoomsWithGuests();
+    validationTypeHousing();
+    timingTime(e);
+  });
+
+  loaderAvatar.addEventListener('change', function () {
+    choiсeAvatar();
+  });
+
+  loaderPhotos.addEventListener('change', function () {
+    choiсePhotos();
+  });
 
   form.addEventListener('submit', function (e) {
 
@@ -147,7 +212,7 @@
 
   btnReset.addEventListener('click', function () {
 
-    capacity.style.border = '1px solid #d9d9d3';
+    capacity.style.border = Fields.SIMPLE_FIELD;
     form.reset();
   });
 })();
