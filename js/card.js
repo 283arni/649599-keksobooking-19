@@ -3,6 +3,19 @@
 
 (function () {
 
+  var typesHousing = {
+    'bungalo': 'Бунгало',
+    'flat': 'Квартира',
+    'house': 'Дом',
+    'palace': 'Дворец'
+  };
+
+  var Numebers = {
+    ZERO: 0,
+    ONE: 1,
+    FIVE: 5
+  };
+
   var createFeatures = function (namesFeatures) {
 
     var fragment = document.createDocumentFragment();
@@ -30,34 +43,25 @@
     return fragment;
   };
 
-  var chooseType = function (type) {
+  var checkRooms = function (rooms, guests) {
+    var messageRooms = rooms.toString();
+    var messageGuasts = guests.toString();
 
-    switch (type) {
-      case 'palace':
-        type = 'Дворец';
-        break;
-      case 'flat':
-        type = 'Квартира';
-        break;
-      case 'bungalo':
-        type = 'Бунгало';
-        break;
-      case 'house':
-        type = 'Дом';
+    if (+messageRooms[messageRooms.length - Numebers.ONE] === Numebers.ONE) {
+      messageRooms = rooms + ' комната для ';
+    } else if (+messageRooms[messageRooms.length - Numebers.ONE] >= Numebers.FIVE || +messageRooms === Numebers.ZERO) {
+      messageRooms = rooms + ' комнат для ';
+    } else {
+      messageRooms = rooms + ' комнаты для ';
     }
 
-    return type;
-  };
-
-  var checkGuests = function (rooms, guests) {
-
-    if (rooms === 1) {
-      return rooms + ' комната для ' + guests + ' гостей';
-    } else if (rooms === 5) {
-      return rooms + ' комнат для ' + guests + ' гостей';
+    if (+messageGuasts[messageGuasts.length - Numebers.ONE] === Numebers.ONE) {
+      messageGuasts = guests + ' гостя';
+    } else {
+      messageGuasts = guests + ' гостей';
     }
 
-    return rooms + ' комнаты для ' + guests + ' гостей';
+    return messageRooms + messageGuasts;
   };
 
   var createCard = function (item) {
@@ -80,8 +84,8 @@
     elemCardTitle.textContent = item.offer.title;
     elemCardAddress.textContent = item.offer.address;
     elemCardPrice.innerHTML = item.offer.price + ' &#x20bd;<span>/ночь</span>';
-    elemCardType.textContent = chooseType(item.offer.type);
-    elemCardAccommodate.textContent = checkGuests(item.offer.rooms, item.offer.guests);
+    elemCardType.textContent = typesHousing[item.offer.type];
+    elemCardAccommodate.textContent = checkRooms(item.offer.rooms, item.offer.guests);
     elemCardTime.textContent = 'Заезд после ' + item.offer.checkin + ', выезд до ' + item.offer.checkout;
     elemCardFeaturesClone.append(createFeatures(item.offer.features));
     elemCardFeatures.replaceWith(elemCardFeaturesClone);

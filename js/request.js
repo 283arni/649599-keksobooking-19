@@ -14,8 +14,6 @@
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
-    xhr.open('GET', url);
-
     xhr.addEventListener('load', function () {
       if (xhr.status === STATUS_OK) {
         onLoad(xhr.response);
@@ -30,6 +28,7 @@
 
     xhr.timeout = SET_TIMEOUT;
 
+    xhr.open('GET', url);
     xhr.send();
   };
 
@@ -38,8 +37,6 @@
 
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-
-    xhr.open('POST', url);
 
     xhr.addEventListener('load', function () {
       if (xhr.status === STATUS_OK) {
@@ -55,6 +52,7 @@
 
     xhr.timeout = SET_TIMEOUT;
 
+    xhr.open('POST', url);
     xhr.send(data);
   };
 

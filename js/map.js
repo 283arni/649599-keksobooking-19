@@ -31,8 +31,6 @@
     activeFields(mapFilters);
     map.classList.remove('map--faded');
     form.classList.remove('ad-form--disabled');
-
-
   };
 
   var closeMap = function () {
@@ -58,14 +56,14 @@
       addCard(card);
     });
 
-    btnPin.addEventListener('keydown', function (e) {
-      if (e.key === KEY_ENTER) {
+    btnPin.addEventListener('keydown', function (evt) {
+      if (evt.key === KEY_ENTER) {
         addCard(card);
       }
     });
   };
 
-  var removeOpenIfPopup = function () {
+  var removePopupIfOpen = function () {
 
     if (map.querySelector('.popup')) {
       map.querySelector('.popup').remove();
@@ -75,21 +73,31 @@
 
   var addCard = function (card) {
 
-    removeOpenIfPopup();
+    removePopupIfOpen();
     mapFiltersBlock.before(card);
+
+    var closePopup = function () {
+      popup.remove();
+      popupClose.removeEventListener('click', onClickClosePopup);
+      document.removeEventListener('keydown', onKeydownClosePopup);
+    };
+
+    var onClickClosePopup = function () {
+      closePopup();
+    };
+
+    var onKeydownClosePopup = function (evt) {
+      if (evt.key === KEY_ESC) {
+        closePopup();
+      }
+    };
 
     var popup = map.querySelector('.popup');
     var popupClose = popup.querySelector('.popup__close');
 
-    popupClose.addEventListener('click', function () {
-      popup.remove();
-    });
+    popupClose.addEventListener('click', onClickClosePopup);
 
-    document.addEventListener('keydown', function (e) {
-      if (e.key === KEY_ESC) {
-        popup.remove();
-      }
-    });
+    document.addEventListener('keydown', onKeydownClosePopup);
   };
 
   window.addEventListener('load', function () {
@@ -101,6 +109,6 @@
     openMap: openMap,
     closeMap: closeMap,
     watchClickPins: watchClickPins,
-    removeOpenIfPopup: removeOpenIfPopup
+    removePopupIfOpen: removePopupIfOpen
   };
 })();

@@ -87,8 +87,8 @@
     return 'Произошли проблемы: ' + errorMessage;
   };
 
-  mainPin.addEventListener('keydown', function (e) {
-    if (e.key === KEY_ENTER && map.classList.contains('map--faded')) {
+  mainPin.addEventListener('keydown', function (evt) {
+    if (evt.key === KEY_ENTER && map.classList.contains('map--faded')) {
       window.request.load(onLoad, onError);
     }
   });

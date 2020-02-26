@@ -106,23 +106,23 @@
     messageSuccess.removeEventListener('click', onSuccessClick);
   };
 
-  var onErrorClickOnOverlay = function (e) {
+  var onErrorClickOnOverlay = function (evt) {
 
-    if (e.target === messageError) {
+    if (evt.target === messageError) {
       closeMessageError();
     }
   };
 
-  var onErrorClick = function (e) {
+  var onErrorClick = function (evt) {
 
-    if (e.target === btnCloseError) {
+    if (evt.target === btnCloseError) {
       closeMessageError();
     }
   };
 
-  var onErrorPress = function (e) {
+  var onErrorPress = function (evt) {
 
-    if (e.key === KEY_ESC) {
+    if (evt.key === KEY_ESC) {
       closeMessageError();
     }
   };
