@@ -1,15 +1,16 @@
 'use strict';
+
 (function () {
 
-  var TIMEOUT_TIME = 500;
+  var TIMER = 500;
   var LOW_PRICE = 10000;
-  var HIGHT_PRICE = 50000;
+  var HIGH_PRICE = 50000;
 
   var Levels = {
     ANYTHING: 'any',
     LOW: 'low',
     MIDDLE: 'middle',
-    HIGHT: 'hight'
+    HIGH: 'high'
   };
 
   var valueOptions = {
@@ -20,16 +21,11 @@
   };
 
   var formFilters = document.querySelector('.map__filters');
+  var formFutures = document.querySelectorAll('.map__checkbox');
   var typeHousing = formFilters.querySelector('#housing-type');
   var priceHousing = formFilters.querySelector('#housing-price');
   var guestHousing = formFilters.querySelector('#housing-guests');
   var roomHousing = formFilters.querySelector('#housing-rooms');
-  var checkWifi = formFilters.querySelector('#filter-wifi');
-  var checkDishwasher = formFilters.querySelector('#filter-dishwasher');
-  var checkParking = formFilters.querySelector('#filter-parking');
-  var checkWasher = formFilters.querySelector('#filter-washer');
-  var checkElevator = formFilters.querySelector('#filter-elevator');
-  var checkConditioner = formFilters.querySelector('#filter-conditioner');
 
   var filterAllFilds = function (arr) {
 
@@ -46,15 +42,15 @@
         var test;
 
         if (priceHousing.value === Levels.MIDDLE) {
-          test = item.offer.price >= LOW_PRICE && item.offer.price <= HIGHT_PRICE;
+          test = item.offer.price >= LOW_PRICE && item.offer.price <= HIGH_PRICE;
         }
 
         if (priceHousing.value === Levels.LOW) {
           test = item.offer.price < LOW_PRICE;
         }
 
-        if (priceHousing.value === Levels.HIGHT) {
-          test = item.offer.price > HIGHT_PRICE;
+        if (priceHousing.value === Levels.HIGH) {
+          test = item.offer.price > HIGH_PRICE;
         }
 
         return test;
@@ -75,46 +71,22 @@
       });
     }
 
-    if (checkWifi.checked) {
-      newArr = checkAvailabilityFeatures(newArr, checkWifi);
-    }
-
-    if (checkDishwasher.checked) {
-      newArr = checkAvailabilityFeatures(newArr, checkDishwasher);
-    }
-
-    if (checkParking.checked) {
-      newArr = checkAvailabilityFeatures(newArr, checkParking);
-    }
-
-    if (checkWasher.checked) {
-      newArr = checkAvailabilityFeatures(newArr, checkWasher);
-    }
-
-    if (checkElevator.checked) {
-      newArr = checkAvailabilityFeatures(newArr, checkElevator);
-    }
-
-    if (checkConditioner.checked) {
-      newArr = checkAvailabilityFeatures(newArr, checkConditioner);
+    for (var i = 0; i < formFutures.length; i++) {
+      var item = formFutures[i];
+      if (item.checked) {
+        newArr = checkAvailabilityFeatures(newArr, item);
+      }
     }
 
     return newArr;
   };
 
   var checkAvailabilityFeatures = function (arr, feature) {
-
-    var itemsChecked = [];
-
-    for (var i = 0; i < arr.length; i++) {
-      for (var j = 0; j < arr[i].offer.features.length; j++) {
-        if (arr[i].offer.features[j] === feature.value) {
-          itemsChecked.push(arr[i]);
-        }
-      }
-    }
-
-    return itemsChecked;
+    return arr.filter(function (it) {
+      return it.offer.features.some(function (item) {
+        return item === feature.value;
+      });
+    });
   };
 
   var doWhenChangedForm = function () {
@@ -130,6 +102,6 @@
       window.clearTimeout(timeout);
     }
 
-    timeout = setTimeout(doWhenChangedForm, TIMEOUT_TIME);
+    timeout = setTimeout(doWhenChangedForm, TIMER);
   });
 })();

@@ -11,6 +11,7 @@
   var mapPins = document.querySelector('.map__pins');
   var addressInput = document.querySelector('#address');
   var mainPin = mapPins.querySelector('.map__pin--main');
+  var centerMainPinMap = Math.floor(parseInt(getComputedStyle(mainPin).width, 10) / DIVISOR);
 
   var Coord = function (x, y) {
     this.x = x;
@@ -21,7 +22,7 @@
 
     var startCoords = new Coord(evt.clientX, evt.clientY);
 
-    addressInput.value = findCoordsMainPin(NON_SHIFT, NON_SHIFT);
+    addressInput.value = findCoordsMainPin();
 
     var onMouseMove = function (moveEvt) {
 
@@ -54,11 +55,11 @@
 
   var findCoordsMainPin = function (shiftX, shiftY) {
 
-    var shiftCoords = new Coord(Math.floor((mainPin.offsetLeft - shiftX) + parseInt(getComputedStyle(mainPin).width, 10) / DIVISOR), Math.floor((mainPin.offsetTop - shiftY) + parseInt(getComputedStyle(mainPin).height, 10)));
+    var offset = new Coord(Math.floor((mainPin.offsetLeft - (shiftX || NON_SHIFT)) + centerMainPinMap), Math.floor((mainPin.offsetTop - (shiftY || NON_SHIFT)) + parseInt(getComputedStyle(mainPin).height, 10)));
 
-    var elemAfterHeight = parseInt(getComputedStyle(mainPin, ':after').height, 10);
+    var blockAfterHeight = parseInt(getComputedStyle(mainPin, ':after').height, 10);
 
-    return shiftCoords.x + ', ' + (shiftCoords.y + elemAfterHeight);
+    return offset.x + ', ' + (offset.y + blockAfterHeight);
   };
 
   var stopMoveY = function (coords) {
@@ -67,6 +68,7 @@
 
   window.drag = {
     findCoordsMainPin: findCoordsMainPin,
-    onDrag: onDrag
+    onDrag: onDrag,
+    centerMainPinMap: centerMainPinMap
   };
 })();

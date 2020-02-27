@@ -7,10 +7,12 @@
 
   var map = document.querySelector('.map');
   var mapPins = document.querySelector('.map__pins');
-  var mapFiltersBlock = map.querySelector('.map__filters-container');
-  var mapFilters = mapFiltersBlock.querySelectorAll('.map__filter');
   var form = document.querySelector('.ad-form');
   var fields = document.querySelectorAll('fieldset');
+  var addressInput = document.querySelector('#address');
+  var mainPinMap = map.querySelector('.map__pin--main');
+  var mapFiltersBlock = map.querySelector('.map__filters-container');
+  var mapFilters = mapFiltersBlock.querySelectorAll('.map__filter');
 
 
   var disableFields = function (elems) {
@@ -78,15 +80,15 @@
 
     var closePopup = function () {
       popup.remove();
-      popupClose.removeEventListener('click', onClickClosePopup);
-      document.removeEventListener('keydown', onKeydownClosePopup);
+      popupClose.removeEventListener('click', onClosePopupClick);
+      document.removeEventListener('keydown', onClosePopupKeydown);
     };
 
-    var onClickClosePopup = function () {
+    var onClosePopupClick = function () {
       closePopup();
     };
 
-    var onKeydownClosePopup = function (evt) {
+    var onClosePopupKeydown = function (evt) {
       if (evt.key === KEY_ESC) {
         closePopup();
       }
@@ -95,12 +97,13 @@
     var popup = map.querySelector('.popup');
     var popupClose = popup.querySelector('.popup__close');
 
-    popupClose.addEventListener('click', onClickClosePopup);
+    popupClose.addEventListener('click', onClosePopupClick);
 
-    document.addEventListener('keydown', onKeydownClosePopup);
+    document.addEventListener('keydown', onClosePopupKeydown);
   };
 
   window.addEventListener('load', function () {
+    addressInput.value = (parseInt(getComputedStyle(mainPinMap).left, 10) + window.drag.centerMainPinMap) + ', ' + (parseInt(getComputedStyle(mainPinMap).top, 10) + window.drag.centerMainPinMap);
     disableFields(fields);
     disableFields(mapFilters);
   });
