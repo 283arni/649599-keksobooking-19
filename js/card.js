@@ -3,9 +3,23 @@
 
 (function () {
 
-  var createFeatures = function (namesFeatures) {
+  var typesHousing = {
+    'bungalo': 'Бунгало',
+    'flat': 'Квартира',
+    'house': 'Дом',
+    'palace': 'Дворец'
+  };
 
-    var fragment = document.createDocumentFragment();
+  var Numebers = {
+    ZERO: 0,
+    ONE: 1,
+    FIVE: 5
+  };
+
+  var templateCard = document.querySelector('#card').content.querySelector('.map__card');
+  var fragment = document.createDocumentFragment();
+
+  var createFeatures = function (namesFeatures) {
 
     for (var i = 0; i < namesFeatures.length; i++) {
       var elem = document.createElement('li');
@@ -19,8 +33,6 @@
 
   var addPhoto = function (elem, photos) {
 
-    var fragment = document.createDocumentFragment();
-
     for (var i = 0; i < photos.length; i++) {
       var elemClone = elem.cloneNode();
       elemClone.setAttribute('src', photos[i]);
@@ -30,39 +42,28 @@
     return fragment;
   };
 
-  var chooseType = function (type) {
+  var checkRooms = function (rooms, guests) {
+    var messageRooms = rooms.toString();
+    var messageGuasts = guests.toString();
 
-    switch (type) {
-      case 'palace':
-        type = 'Дворец';
-        break;
-      case 'flat':
-        type = 'Квартира';
-        break;
-      case 'bungalo':
-        type = 'Бунгало';
-        break;
-      case 'house':
-        type = 'Дом';
+    if (+messageRooms[messageRooms.length - Numebers.ONE] === Numebers.ONE) {
+      messageRooms = rooms + ' комната для ';
+    } else if (+messageRooms[messageRooms.length - Numebers.ONE] >= Numebers.FIVE || +messageRooms === Numebers.ZERO) {
+      messageRooms = rooms + ' комнат для ';
+    } else {
+      messageRooms = rooms + ' комнаты для ';
     }
 
-    return type;
-  };
-
-  var checkGuests = function (rooms, guests) {
-
-    if (rooms === 1) {
-      return rooms + ' комната для ' + guests + ' гостей';
-    } else if (rooms === 5) {
-      return rooms + ' комнат для ' + guests + ' гостей';
+    if (+messageGuasts[messageGuasts.length - Numebers.ONE] === Numebers.ONE) {
+      messageGuasts = guests + ' гостя';
+    } else {
+      messageGuasts = guests + ' гостей';
     }
 
-    return rooms + ' комнаты для ' + guests + ' гостей';
+    return messageRooms + messageGuasts;
   };
 
   var createCard = function (item) {
-
-    var templateCard = document.querySelector('#card').content.querySelector('.map__card');
 
     var elemCard = templateCard.cloneNode(true);
     var elemCardTitle = elemCard.querySelector('.popup__title');
@@ -80,14 +81,22 @@
     elemCardTitle.textContent = item.offer.title;
     elemCardAddress.textContent = item.offer.address;
     elemCardPrice.innerHTML = item.offer.price + ' &#x20bd;<span>/ночь</span>';
-    elemCardType.textContent = chooseType(item.offer.type);
-    elemCardAccommodate.textContent = checkGuests(item.offer.rooms, item.offer.guests);
+    elemCardType.textContent = typesHousing[item.offer.type];
+    elemCardAccommodate.textContent = checkRooms(item.offer.rooms, item.offer.guests);
     elemCardTime.textContent = 'Заезд после ' + item.offer.checkin + ', выезд до ' + item.offer.checkout;
     elemCardFeaturesClone.append(createFeatures(item.offer.features));
     elemCardFeatures.replaceWith(elemCardFeaturesClone);
     elemCardDescription.textContent = item.offer.description;
     elemCardPhoto.replaceWith(addPhoto(elemCardPhoto, item.offer.photos));
     elemCardAvatar.setAttribute('src', item.author.avatar);
+
+    if (!elemCard.querySelector('.popup__photos').children[0]) {
+      elemCard.querySelector('.popup__photos').style.display = 'none';
+    }
+
+    if (!elemCard.querySelector('.popup__features').children[0]) {
+      elemCard.querySelector('.popup__features').style.display = 'none';
+    }
 
     return elemCard;
   };
