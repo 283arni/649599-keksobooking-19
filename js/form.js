@@ -7,17 +7,22 @@
   var MAX_HEIGHT_IMG = '70px';
 
   var Fields = {
-    SUCCESS_FIELD: '2px solid green',
-    FAILURE_FIELD: '3px solid red',
-    SIMPLE_FIELD: '1px solid #d9d9d3'
+    FAILURE: '3px dotted red',
+    NONE: 'none'
+  };
+
+  var Rooms = {
+    ONE: '1',
+    TWO: '2',
+    TREE: '3',
+    HUNDRED: '100'
   };
 
   var Guests = {
-    NO_GUESTS: '0',
-    ONE_GUEST: '1',
-    TWO_GUESTS: '2',
-    TREE_GUESTS: '3',
-    HUNDRED_GUESTES: '100'
+    NO: '0',
+    ONE: '1',
+    TWO: '2',
+    TREE: '3'
   };
 
   var priceHousing = {
@@ -31,9 +36,12 @@
   var form = document.querySelector('.ad-form');
   var messageSuccess = document.querySelector('#success').content.querySelector('.success');
   var messageError = document.querySelector('#error').content.querySelector('.error');
+  var mapFilters = document.querySelector('.map__filters');
   var typeOfHousing = form.querySelector('#type');
+  var title = form.querySelector('#title');
   var priceNight = form.querySelector('#price');
   var timeinInput = form.querySelector('#timein');
+  var addressInput = form.querySelector('#address');
   var timeoutInput = form.querySelector('#timeout');
   var quantityRooms = form.querySelector('#room_number');
   var capacity = form.querySelector('#capacity');
@@ -43,6 +51,14 @@
   var loaderPhotos = form.querySelector('.ad-form__input');
   var photo = form.querySelector('.ad-form__photo');
   var btnCloseError = messageError.querySelector('.error__button');
+  var mainPin = document.querySelector('.map__pin--main');
+  var originCoordsY = getComputedStyle(mainPin).top;
+  var originCoordsX = getComputedStyle(mainPin).left;
+
+  var setOriginCoords = function () {
+    mainPin.style.top = originCoordsY;
+    mainPin.style.left = originCoordsX;
+  };
 
   var choiсePhotos = function () {
     var files = loaderPhotos.files;
@@ -87,9 +103,9 @@
     }
   };
 
-  var onSuccessPress = function (e) {
+  var onSuccessKeydown = function (evt) {
+    if (evt.key === KEY_ESC) {
 
-    if (e.key === KEY_ESC) {
       closeMessageSuccess();
     }
   };
@@ -99,30 +115,29 @@
   };
 
   var closeMessageSuccess = function () {
-
     messageSuccess.remove();
 
-    document.removeEventListener('keydown', onSuccessPress);
+    document.removeEventListener('keydown', onSuccessKeydown);
     messageSuccess.removeEventListener('click', onSuccessClick);
   };
 
-  var onErrorClickOnOverlay = function (e) {
+  var onErrorOverlayClick = function (evt) {
 
-    if (e.target === messageError) {
+    if (evt.target === messageError) {
       closeMessageError();
     }
   };
 
-  var onErrorClick = function (e) {
+  var onErrorClick = function (evt) {
 
-    if (e.target === btnCloseError) {
+    if (evt.target === btnCloseError) {
       closeMessageError();
     }
   };
 
-  var onErrorPress = function (e) {
+  var onErrorKeydown = function (evt) {
 
-    if (e.key === KEY_ESC) {
+    if (evt.key === KEY_ESC) {
       closeMessageError();
     }
   };
@@ -132,31 +147,46 @@
     messageError.remove();
 
     btnCloseError.removeEventListener('click', onErrorClick);
-    messageError.removeEventListener('click', onErrorClickOnOverlay);
-    document.removeEventListener('keydown', onErrorPress);
+    messageError.removeEventListener('click', onErrorOverlayClick);
+    document.removeEventListener('keypress', onErrorKeydown);
+  };
+
+  var validationTitle = function () {
+
+    title.style.outline = Fields.NONE;
+
+    if (title.validity.valueMissing || title.validity.tooShort) {
+      title.style.outline = Fields.FAILURE;
+    }
   };
 
   var validationRoomsWithGuests = function () {
 
-    if (quantityRooms.value === Guests.ONE_GUEST && capacity.value === Guests.ONE_GUEST) {
-      capacity.style.border = Fields.SUCCESS_FIELD;
-    } else if (quantityRooms.value === Guests.TWO_GUESTS && (capacity.value === Guests.ONE_GUEST || capacity.value === Guests.TWO_GUESTS)) {
-      capacity.style.border = Fields.SUCCESS_FIELD;
-    } else if (quantityRooms.value === Guests.TREE_GUESTS && (capacity.value === Guests.ONE_GUEST || capacity.value === Guests.TWO_GUESTS || capacity.value === Guests.TREE_GUESTS)) {
-      capacity.style.border = Fields.SUCCESS_FIELD;
-    } else if (quantityRooms.value === Guests.HUNDRED_GUESTES && (capacity.value === Guests.NO_GUESTS)) {
-      capacity.style.border = Fields.SUCCESS_FIELD;
-    } else {
-      capacity.style.border = Fields.FAILURE_FIELD;
-      return false;
-    }
+    capacity.setCustomValidity('');
 
-    return true;
+    if (quantityRooms.value === Rooms.ONE && capacity.value === Guests.ONE) {
+      capacity.style.outline = Fields.NONE;
+    } else if (quantityRooms.value === Rooms.TWO && (capacity.value === Guests.ONE || capacity.value === Guests.TWO)) {
+      capacity.style.outline = Fields.NONE;
+    } else if (quantityRooms.value === Rooms.TREE && (capacity.value === Guests.ONE || capacity.value === Guests.TWO || capacity.value === Guests.TREE_GUESTS)) {
+      capacity.style.outline = Fields.NONE;
+    } else if (quantityRooms.value === Rooms.HUNDRED && (capacity.value === Guests.NO)) {
+      capacity.style.outline = Fields.NONE;
+    } else {
+      capacity.style.outline = Fields.FAILURE;
+      capacity.setCustomValidity('Не допустимое количество');
+    }
   };
 
   var validationTypeHousing = function () {
     priceNight.placeholder = 'от ' + priceHousing[typeOfHousing.value];
     priceNight.setAttribute('min', priceHousing[typeOfHousing.value]);
+    priceNight.style.outline = Fields.NONE;
+
+    if (priceNight.validity.rangeUnderflow || priceNight.validity.valueMissing) {
+      priceNight.style.outline = Fields.FAILURE;
+    }
+
   };
 
   var timingTime = function (e) {
@@ -173,22 +203,28 @@
     main.append(messageError);
 
     btnCloseError.addEventListener('click', onErrorClick);
-    messageError.addEventListener('click', onErrorClickOnOverlay);
-    document.addEventListener('keydown', onErrorPress);
+    messageError.addEventListener('click', onErrorOverlayClick);
+    document.addEventListener('keydown', onErrorKeydown);
   };
 
   var onLoad = function () {
 
-    capacity.style.border = Fields.SIMPLE_FIELD;
+    capacity.style.outline = Fields.NONE;
     form.reset();
     window.map.closeMap();
 
-    document.body.append(messageSuccess);
+    main.append(messageSuccess);
+
+    messageSuccess.focus();
+    mapFilters.reset();
+    setOriginCoords();
+
     messageSuccess.addEventListener('click', onSuccessClick);
-    document.addEventListener('keydown', onSuccessPress);
+    document.addEventListener('keydown', onSuccessKeydown);
   };
 
   form.addEventListener('change', function (e) {
+    validationTitle();
     validationRoomsWithGuests();
     validationTypeHousing();
     timingTime(e);
@@ -210,9 +246,17 @@
 
   });
 
-  btnReset.addEventListener('click', function () {
+  btnReset.addEventListener('click', function (evt) {
+    evt.preventDefault();
 
-    capacity.style.border = Fields.SIMPLE_FIELD;
+    title.style.outline = Fields.NONE;
+    priceNight.style.outline = Fields.NONE;
+    capacity.style.outline = Fields.NONE;
+    mapFilters.reset();
+    setOriginCoords();
     form.reset();
+    window.map.removePopupIfOpen();
+    window.pins.removePins();
+    addressInput.value = window.drag.findCoordsMainPin();
   });
 })();
