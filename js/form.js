@@ -20,7 +20,7 @@
     HUNDRED_GUESTES: '100'
   };
 
-  var pricesHousing = {
+  var priceHousing = {
     'bungalo': '0',
     'flat': '1000',
     'house': '5000',
@@ -155,8 +155,8 @@
   };
 
   var validationTypeHousing = function () {
-    priceNight.placeholder = 'от ' + pricesHousing[typeOfHousing.value];
-    priceNight.setAttribute('min', pricesHousing[typeOfHousing.value]);
+    priceNight.placeholder = 'от ' + priceHousing[typeOfHousing.value];
+    priceNight.setAttribute('min', priceHousing[typeOfHousing.value]);
   };
 
   var timingTime = function (e) {
