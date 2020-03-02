@@ -48,6 +48,7 @@
   var btnReset = form.querySelector('.ad-form__reset');
   var loaderAvatar = form.querySelector('.ad-form-header__input');
   var avatar = form.querySelector('.ad-form-header__preview img');
+  var avatarFirstSrc = avatar.src;
   var loaderPhotos = form.querySelector('.ad-form__input');
   var photo = form.querySelector('.ad-form__photo');
   var btnCloseError = messageError.querySelector('.error__button');
@@ -105,7 +106,6 @@
 
   var onSuccessKeydown = function (evt) {
     if (evt.key === KEY_ESC) {
-
       closeMessageSuccess();
     }
   };
@@ -168,7 +168,7 @@
       capacity.style.outline = Fields.NONE;
     } else if (quantityRooms.value === Rooms.TWO && (capacity.value === Guests.ONE || capacity.value === Guests.TWO)) {
       capacity.style.outline = Fields.NONE;
-    } else if (quantityRooms.value === Rooms.TREE && (capacity.value === Guests.ONE || capacity.value === Guests.TWO || capacity.value === Guests.TREE_GUESTS)) {
+    } else if (quantityRooms.value === Rooms.TREE && (capacity.value === Guests.ONE || capacity.value === Guests.TWO || capacity.value === Guests.TREE)) {
       capacity.style.outline = Fields.NONE;
     } else if (quantityRooms.value === Rooms.HUNDRED && (capacity.value === Guests.NO)) {
       capacity.style.outline = Fields.NONE;
@@ -211,6 +211,9 @@
 
     capacity.style.outline = Fields.NONE;
     form.reset();
+    avatar.src = avatarFirstSrc;
+    photo.innerHTML = '';
+    window.map.removePopupIfOpen();
     window.map.closeMap();
 
     main.append(messageSuccess);
@@ -255,6 +258,8 @@
     mapFilters.reset();
     setOriginCoords();
     form.reset();
+    avatar.src = avatarFirstSrc;
+    photo.innerHTML = '';
     window.map.removePopupIfOpen();
     window.pins.removePins();
     addressInput.value = window.drag.findCoordsMainPin();
