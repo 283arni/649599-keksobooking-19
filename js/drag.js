@@ -6,19 +6,22 @@
   var STOP_TOP_MOVE = 130;
   var STOP_BOTTOM_MOVE = 630;
   var DIVISOR = 2;
-  var SLISER_COORDS = -3;
+  var SLISER_COORDS_Y = -3;
+  var SLISER_COORDS_X = '0, 3';
 
   var mapPins = document.querySelector('.map__pins');
   var addressInput = document.querySelector('#address');
   var mainPin = mapPins.querySelector('.map__pin--main');
   var centerMainPinMap = Math.floor(parseInt(getComputedStyle(mainPin).width, 10) / DIVISOR);
+  var widthMap = Math.floor(parseInt(getComputedStyle(mapPins).width, 10));
 
   var Coord = function (x, y) {
     this.x = x;
     this.y = y;
   };
 
-  var onDrag = function (evt) {
+  var onMove = function (evt) {
+
 
     var startCoords = new Coord(evt.clientX, evt.clientY);
 
@@ -32,13 +35,13 @@
 
       startCoords = new Coord(moveEvt.clientX, moveEvt.clientY);
 
-      if (stopMoveY(findCoordsMainPin(shift.x, shift.y)) > STOP_TOP_MOVE && stopMoveY(findCoordsMainPin(shift.x, shift.y)) < STOP_BOTTOM_MOVE) {
+      if (stopMove(findCoordsMainPin(shift.x, shift.y), SLISER_COORDS_Y) >= STOP_TOP_MOVE && stopMove(findCoordsMainPin(shift.x, shift.y), SLISER_COORDS_Y) <= STOP_BOTTOM_MOVE && stopMove(findCoordsMainPin(shift.x, shift.y), SLISER_COORDS_X) >= NON_SHIFT && stopMove(findCoordsMainPin(shift.x, shift.y), SLISER_COORDS_X) <= widthMap) {
+
         mainPin.style.top = (mainPin.offsetTop - shift.y) + 'px';
+        mainPin.style.left = (mainPin.offsetLeft - shift.x) + 'px';
+
+        addressInput.value = findCoordsMainPin(shift.x, shift.y);
       }
-
-      mainPin.style.left = (mainPin.offsetLeft - shift.x) + 'px';
-      addressInput.value = findCoordsMainPin(shift.x, shift.y);
-
     };
 
     var onMouseUp = function (upEvt) {
@@ -62,13 +65,13 @@
     return offset.x + ', ' + (offset.y + blockAfterHeight);
   };
 
-  var stopMoveY = function (coords) {
-    return parseInt(coords.slice(SLISER_COORDS), 10);
+  var stopMove = function (coords, sliser) {
+    return parseInt(coords.slice(sliser), 10);
   };
 
   window.drag = {
     findCoordsMainPin: findCoordsMainPin,
-    onDrag: onDrag,
+    onMove: onMove,
     centerMainPinMap: centerMainPinMap
   };
 })();

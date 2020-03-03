@@ -21,7 +21,6 @@
   };
 
   var formFilters = document.querySelector('.map__filters');
-  var formFutures = document.querySelectorAll('.map__checkbox');
   var typeHousing = formFilters.querySelector('#housing-type');
   var priceHousing = formFilters.querySelector('#housing-price');
   var guestHousing = formFilters.querySelector('#housing-guests');
@@ -30,6 +29,7 @@
   var filterAllFilds = function (arr) {
 
     var newArr = arr;
+    var formFeatures = formFilters.querySelectorAll('.map__checkbox:checked');
 
     if (typeHousing.value !== Levels.ANYTHING) {
       newArr = newArr.filter(function (item) {
@@ -71,12 +71,11 @@
       });
     }
 
-    for (var i = 0; i < formFutures.length; i++) {
-      var item = formFutures[i];
-      if (item.checked) {
-        newArr = checkAvailabilityFeatures(newArr, item);
+    formFeatures.forEach(function (feature) {
+      if (feature.checked) {
+        newArr = checkAvailabilityFeatures(newArr, feature);
       }
-    }
+    });
 
     return newArr;
   };
@@ -91,7 +90,7 @@
 
   var doWhenChangedForm = function () {
     window.map.removePopupIfOpen();
-    window.pins.renderPins(filterAllFilds(window.pins.copyPins));
+    window.pins.renderAds(filterAllFilds(window.pins.copyAds));
   };
 
   var timeout;

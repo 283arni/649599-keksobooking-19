@@ -21,23 +21,23 @@
 
   var createFeatures = function (namesFeatures) {
 
-    for (var i = 0; i < namesFeatures.length; i++) {
+    namesFeatures.forEach(function (name) {
       var elem = document.createElement('li');
-      elem.classList.add('popup__feature', 'popup__feature--' + namesFeatures[i]);
-      elem.textContent = namesFeatures[i];
+      elem.classList.add('popup__feature', 'popup__feature--' + name);
+      elem.textContent = name;
       fragment.append(elem);
-    }
+    });
 
     return fragment;
   };
 
   var addPhoto = function (elem, photos) {
 
-    for (var i = 0; i < photos.length; i++) {
+    photos.forEach(function (photo) {
       var elemClone = elem.cloneNode();
-      elemClone.setAttribute('src', photos[i]);
+      elemClone.setAttribute('src', photo);
       fragment.append(elemClone);
-    }
+    });
 
     return fragment;
   };
@@ -101,7 +101,7 @@
     return elemCard;
   };
 
-  window.card = {
+  window.popup = {
     createCard: createCard
   };
 })();
