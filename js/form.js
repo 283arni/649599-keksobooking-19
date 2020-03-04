@@ -44,6 +44,7 @@
   var addressInput = form.querySelector('#address');
   var timeoutInput = form.querySelector('#timeout');
   var quantityRooms = form.querySelector('#room_number');
+  var timeCheck = form.querySelector('.ad-form__element--time');
   var capacity = form.querySelector('#capacity');
   var btnReset = form.querySelector('.ad-form__reset');
   var loaderAvatar = form.querySelector('.ad-form-header__input');
@@ -63,8 +64,8 @@
 
   var choiсePhotos = function () {
     var files = loaderPhotos.files;
-    for (var i = 0; i < files.length; i++) {
-      var fileName = files[i].name.toLowerCase();
+    files.forEach(function (file) {
+      var fileName = file.name.toLowerCase();
 
       var matches = FILE_FORMATS.some(function (it) {
         return fileName.endsWith(it);
@@ -80,9 +81,9 @@
           photo.append(img);
         });
 
-        reader.readAsDataURL(files[i]);
+        reader.readAsDataURL(file);
       }
-    }
+    });
   };
 
   var choiсeAvatar = function () {
@@ -189,12 +190,12 @@
 
   };
 
-  var timingTime = function (e) {
+  var timingTime = function (evt) {
 
-    if (e.target === timeoutInput) {
-      timeinInput.value = e.target.value;
-    } else if (e.target === timeinInput) {
-      timeoutInput.value = e.target.value;
+    if (evt.target === timeoutInput) {
+      timeinInput.value = evt.target.value;
+    } else if (evt.target === timeinInput) {
+      timeoutInput.value = evt.target.value;
     }
   };
 
@@ -214,7 +215,7 @@
     avatar.src = avatarFirstSrc;
     photo.innerHTML = '';
     window.map.removePopupIfOpen();
-    window.map.closeMap();
+    window.map.closeSite();
 
     main.append(messageSuccess);
 
@@ -226,11 +227,16 @@
     document.addEventListener('keydown', onSuccessKeydown);
   };
 
-  form.addEventListener('change', function (e) {
-    validationTitle();
-    validationRoomsWithGuests();
-    validationTypeHousing();
-    timingTime(e);
+  // form.addEventListener('change', function (e) {
+  //   validationTitle();
+  //   validationRoomsWithGuests();
+  //   validationTypeHousing();
+  //   timingTime(e);
+  // });
+
+
+  timeCheck.addEventListener('change', function (evt) {
+    timingTime(evt);
   });
 
   loaderAvatar.addEventListener('change', function () {
@@ -241,9 +247,16 @@
     choiсePhotos();
   });
 
-  form.addEventListener('submit', function (e) {
+  title.addEventListener('invalid', function () {
+    validationTitle();
+  });
 
-    e.preventDefault();
+  form.addEventListener('submit', function (evt) {
+
+    evt.preventDefault();
+
+    validationRoomsWithGuests();
+    validationTypeHousing();
 
     window.request.send(new FormData(form), onLoad, onError);
 
@@ -261,7 +274,7 @@
     avatar.src = avatarFirstSrc;
     photo.innerHTML = '';
     window.map.removePopupIfOpen();
-    window.pins.removePins();
+    window.pins.removeAds();
     addressInput.value = window.drag.findCoordsMainPin();
   });
 })();

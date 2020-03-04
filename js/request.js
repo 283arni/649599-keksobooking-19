@@ -5,13 +5,13 @@
   var STATUS_OK = 200;
   var SET_TIMEOUT = 5000;
 
-  var url;
+  var Urls = {
+    GET_DATA: 'https://js.dump.academy/keksobooking/data',
+    SEND_DATA: 'https://js.dump.academy/keksobooking'
+  };
 
+  var getResponse = function (onLoad, onError, xhr) {
 
-  var load = function (onLoad, onError) {
-    url = 'https://js.dump.academy/keksobooking/data';
-
-    var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
@@ -28,31 +28,23 @@
 
     xhr.timeout = SET_TIMEOUT;
 
-    xhr.open('GET', url);
+  };
+
+  var load = function (onLoad, onError) {
+    var xhr = new XMLHttpRequest();
+
+    getResponse(onLoad, onError, xhr);
+
+    xhr.open('GET', Urls.GET_DATA);
     xhr.send();
   };
 
   var send = function (data, onLoad, onError) {
-    url = 'https://js.dump.academy/keksobooking';
-
     var xhr = new XMLHttpRequest();
-    xhr.responseType = 'json';
 
-    xhr.addEventListener('load', function () {
-      if (xhr.status === STATUS_OK) {
-        onLoad();
-      } else {
-        onError(xhr.status);
-      }
-    });
+    getResponse(onLoad, onError, xhr);
 
-    xhr.addEventListener('timeout', function () {
-      onError(xhr.status);
-    });
-
-    xhr.timeout = SET_TIMEOUT;
-
-    xhr.open('POST', url);
+    xhr.open('POST', Urls.SEND_DATA);
     xhr.send(data);
   };
 

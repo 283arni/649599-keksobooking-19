@@ -23,48 +23,45 @@
   var mainPinMap = map.querySelector('.map__pin--main');
 
 
-  var removePins = function () {
+  var removeAds = function () {
     var btnPins = mapPins.querySelectorAll('.map__pin[type="button"]');
 
-    for (var i = 0; i < btnPins.length; i++) {
-      btnPins[i].remove();
-    }
+    btnPins.forEach(function (pin) {
+      pin.remove();
+    });
   };
 
 
-  var renderPins = function (arr) {
+  var renderAds = function (arr) {
 
     var fragment = document.createDocumentFragment();
     var template = document.querySelector('#pin').content.querySelector('.map__pin');
 
-    removePins();
+    removeAds();
 
-    for (var i = 0; i < MAX_RENDER_PINS; i++) {
-      if (!arr[i]) {
-        break;
-      }
+    arr.forEach(function (item, i) {
 
-      if (arr[i].offer) {
+      if (item.offer && i < MAX_RENDER_PINS) {
         var elem = template.cloneNode(true);
         var img = elem.querySelector('img');
-        var coords = 'left: ' + (arr[i].location.x - OFFSET_X) + 'px; top:' + (arr[i].location.y - OFFSET_Y) + 'px;';
+        var coords = 'left: ' + (item.location.x - OFFSET_X) + 'px; top:' + (item.location.y - OFFSET_Y) + 'px;';
 
         elem.setAttribute('style', coords);
-        img.setAttribute('src', arr[i].author.avatar);
-        img.setAttribute('alt', arr[i].offer.title);
+        img.setAttribute('src', item.author.avatar);
+        img.setAttribute('alt', item.offer.title);
+
+        fragment.append(elem);
       }
+    });
 
-      fragment.append(elem);
-    }
-
-    window.map.openMap();
+    window.map.openSite();
     mapPins.append(fragment);
     window.map.watchClickPins(arr);
   };
 
   var onLoad = function (list) {
-    window.pins.copyPins = list;
-    renderPins(list);
+    window.pins.copyAds = list;
+    renderAds(list);
   };
 
   var onError = function (errorMessage) {
@@ -91,6 +88,7 @@
   };
 
   mainPinMap.addEventListener('keydown', function (evt) {
+
     if (evt.key === KEY_ENTER && map.classList.contains('map--faded')) {
       window.request.load(onLoad, onError);
     }
@@ -102,14 +100,14 @@
       window.request.load(onLoad, onError);
     }
 
-    window.drag.onDrag(evt);
+    window.drag.onMove(evt);
   });
 
 
   window.pins = {
-    renderPins: renderPins,
-    copyPins: null,
-    removePins: removePins
+    renderAds: renderAds,
+    copyAds: null,
+    removeAds: removeAds
   };
 
 })();
