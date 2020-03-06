@@ -28,65 +28,66 @@
 
   var filterAllFilds = function (arr) {
 
-    var newArr = arr;
     var formFeatures = formFilters.querySelectorAll('.map__checkbox:checked');
 
-    if (typeHousing.value !== Levels.ANYTHING) {
-      newArr = newArr.filter(function (item) {
-        return typeHousing.value === item.offer.type;
-      });
-    }
+    return arr.filter(function (item) {
 
-    if (priceHousing.value !== Levels.ANYTHING) {
-      newArr = newArr.filter(function (item) {
-        var test;
+      var testForFeatures = true;
+      var testForTypeHousing = true;
+      var testForPrice = true;
+      var testForRooms = true;
+      var testForGuests = true;
+
+
+      if (typeHousing.value !== Levels.ANYTHING) {
+        testForTypeHousing = typeHousing.value === item.offer.type;
+      }
+
+      if (priceHousing.value !== Levels.ANYTHING) {
 
         if (priceHousing.value === Levels.MIDDLE) {
-          test = item.offer.price >= LOW_PRICE && item.offer.price <= HIGH_PRICE;
+          testForPrice = item.offer.price >= LOW_PRICE && item.offer.price <= HIGH_PRICE;
         }
 
         if (priceHousing.value === Levels.LOW) {
-          test = item.offer.price < LOW_PRICE;
+          testForPrice = item.offer.price < LOW_PRICE;
         }
 
         if (priceHousing.value === Levels.HIGH) {
-          test = item.offer.price > HIGH_PRICE;
+          testForPrice = item.offer.price > HIGH_PRICE;
         }
-
-        return test;
-      });
-    }
-
-    if (roomHousing.value !== Levels.ANYTHING) {
-
-      newArr = newArr.filter(function (item) {
-        return item.offer.rooms === valueOptions[roomHousing.value];
-      });
-    }
-
-    if (guestHousing.value !== Levels.ANYTHING) {
-
-      newArr = newArr.filter(function (item) {
-        return item.offer.guests === valueOptions[guestHousing.value];
-      });
-    }
-
-    formFeatures.forEach(function (feature) {
-      if (feature.checked) {
-        newArr = checkAvailabilityFeatures(newArr, feature);
       }
-    });
 
-    return newArr;
+      if (roomHousing.value !== Levels.ANYTHING) {
+        testForRooms = item.offer.rooms === valueOptions[roomHousing.value];
+      }
+
+      if (guestHousing.value !== Levels.ANYTHING) {
+        testForGuests = item.offer.guests === valueOptions[guestHousing.value];
+      }
+
+      if (formFeatures.length) {
+        testForFeatures = checkAvailabilityFeatures(item, formFeatures);
+      }
+
+      return testForTypeHousing && testForPrice && testForGuests && testForRooms && testForFeatures;
+    });
   };
 
-  var checkAvailabilityFeatures = function (arr, feature) {
-    return arr.filter(function (it) {
-      return it.offer.features.some(function (item) {
-        return item === feature.value;
+  var checkAvailabilityFeatures = function (it, features) {
+    var num = 0;
+
+    features.forEach(function (feature) {
+      it.offer.features.forEach(function (item) {
+        if (feature.value === item) {
+          num += 1;
+        }
       });
     });
+
+    return num === features.length;
   };
+
 
   var doWhenChangedForm = function () {
     window.map.removePopupIfOpen();

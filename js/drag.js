@@ -6,14 +6,14 @@
   var STOP_TOP_MOVE = 130;
   var STOP_BOTTOM_MOVE = 630;
   var DIVISOR = 2;
-  var SLISER_COORDS_Y = -3;
-  var SLISER_COORDS_X = '0, 3';
 
   var mapPins = document.querySelector('.map__pins');
   var addressInput = document.querySelector('#address');
   var mainPin = mapPins.querySelector('.map__pin--main');
   var centerMainPinMap = Math.floor(parseInt(getComputedStyle(mainPin).width, 10) / DIVISOR);
   var widthMap = Math.floor(parseInt(getComputedStyle(mapPins).width, 10));
+  var heightMainPin = parseInt(getComputedStyle(mainPin).height, 10);
+  var heightMainPinAfter;
 
   var Coord = function (x, y) {
     this.x = x;
@@ -22,10 +22,10 @@
 
   var onMove = function (evt) {
 
-
     var startCoords = new Coord(evt.clientX, evt.clientY);
+    heightMainPinAfter = parseInt(getComputedStyle(mainPin, ':after').height, 10);
 
-    addressInput.value = findCoordsMainPin();
+    addressInput.value = addCoordsInAddress(mainPin.style.left, mainPin.style.top);
 
     var onMouseMove = function (moveEvt) {
 
@@ -35,13 +35,15 @@
 
       startCoords = new Coord(moveEvt.clientX, moveEvt.clientY);
 
-      if (stopMove(findCoordsMainPin(shift.x, shift.y), SLISER_COORDS_Y) >= STOP_TOP_MOVE && stopMove(findCoordsMainPin(shift.x, shift.y), SLISER_COORDS_Y) <= STOP_BOTTOM_MOVE && stopMove(findCoordsMainPin(shift.x, shift.y), SLISER_COORDS_X) >= NON_SHIFT && stopMove(findCoordsMainPin(shift.x, shift.y), SLISER_COORDS_X) <= widthMap) {
-
+      if (findCoordsMainPinY(shift.y) >= STOP_TOP_MOVE && findCoordsMainPinY(shift.y) <= STOP_BOTTOM_MOVE) {
         mainPin.style.top = (mainPin.offsetTop - shift.y) + 'px';
-        mainPin.style.left = (mainPin.offsetLeft - shift.x) + 'px';
-
-        addressInput.value = findCoordsMainPin(shift.x, shift.y);
       }
+
+      if (findCoordsMainPinX(shift.x) >= NON_SHIFT && findCoordsMainPinX(shift.x) <= widthMap) {
+        mainPin.style.left = (mainPin.offsetLeft - shift.x) + 'px';
+      }
+
+      addressInput.value = addCoordsInAddress(mainPin.style.left, mainPin.style.top);
     };
 
     var onMouseUp = function (upEvt) {
@@ -56,22 +58,20 @@
     document.addEventListener('mouseup', onMouseUp);
   };
 
-  var findCoordsMainPin = function (shiftX, shiftY) {
-
-    var offset = new Coord(Math.floor((mainPin.offsetLeft - (shiftX || NON_SHIFT)) + centerMainPinMap), Math.floor((mainPin.offsetTop - (shiftY || NON_SHIFT)) + parseInt(getComputedStyle(mainPin).height, 10)));
-
-    var blockAfterHeight = parseInt(getComputedStyle(mainPin, ':after').height, 10);
-
-    return offset.x + ', ' + (offset.y + blockAfterHeight);
+  var findCoordsMainPinX = function (shiftX) {
+    return Math.ceil((mainPin.offsetLeft - (shiftX || NON_SHIFT)) + centerMainPinMap);
   };
 
-  var stopMove = function (coords, sliser) {
-    return parseInt(coords.slice(sliser), 10);
+  var findCoordsMainPinY = function (shiftY) {
+    return Math.ceil((mainPin.offsetTop - (shiftY || NON_SHIFT)) + heightMainPin + (heightMainPinAfter || NON_SHIFT));
+  };
+
+  var addCoordsInAddress = function (left, top) {
+    return (parseInt(left, 10) + centerMainPinMap) + ', ' + (parseInt(top, 10) + heightMainPin + (heightMainPinAfter || NON_SHIFT));
   };
 
   window.drag = {
-    findCoordsMainPin: findCoordsMainPin,
-    onMove: onMove,
-    centerMainPinMap: centerMainPinMap
+    addCoordsInAddress: addCoordsInAddress,
+    onMove: onMove
   };
 })();

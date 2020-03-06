@@ -10,7 +10,7 @@
   var form = document.querySelector('.ad-form');
   var fields = document.querySelectorAll('fieldset');
   var addressInput = document.querySelector('#address');
-  var mainPinMap = map.querySelector('.map__pin--main');
+  var mainPin = document.querySelector('.map__pin--main');
   var mapFiltersBlock = map.querySelector('.map__filters-container');
   var mapFilters = mapFiltersBlock.querySelectorAll('.map__filter');
 
@@ -103,7 +103,7 @@
   };
 
   window.addEventListener('load', function () {
-    addressInput.value = (parseInt(getComputedStyle(mainPinMap).left, 10) + window.drag.centerMainPinMap) + ', ' + (parseInt(getComputedStyle(mainPinMap).top, 10) + window.drag.centerMainPinMap);
+    addressInput.value = window.drag.addCoordsInAddress(mainPin.style.left, mainPin.style.top);
     disableFields(fields);
     disableFields(mapFilters);
   });

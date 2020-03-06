@@ -3,7 +3,7 @@
 
 (function () {
 
-  var typesHousing = {
+  var typeHousing = {
     'bungalo': 'Бунгало',
     'flat': 'Квартира',
     'house': 'Дом',
@@ -81,7 +81,7 @@
     elemCardTitle.textContent = item.offer.title;
     elemCardAddress.textContent = item.offer.address;
     elemCardPrice.innerHTML = item.offer.price + ' &#x20bd;<span>/ночь</span>';
-    elemCardType.textContent = typesHousing[item.offer.type];
+    elemCardType.textContent = typeHousing[item.offer.type];
     elemCardAccommodate.textContent = checkRooms(item.offer.rooms, item.offer.guests);
     elemCardTime.textContent = 'Заезд после ' + item.offer.checkin + ', выезд до ' + item.offer.checkout;
     elemCardFeaturesClone.append(createFeatures(item.offer.features));
@@ -90,11 +90,11 @@
     elemCardPhoto.replaceWith(addPhoto(elemCardPhoto, item.offer.photos));
     elemCardAvatar.setAttribute('src', item.author.avatar);
 
-    if (!elemCard.querySelector('.popup__photos').children[0]) {
+    if (!elemCard.querySelector('.popup__photos').children.length) {
       elemCard.querySelector('.popup__photos').style.display = 'none';
     }
 
-    if (!elemCard.querySelector('.popup__features').children[0]) {
+    if (!elemCard.querySelector('.popup__features').children.length) {
       elemCard.querySelector('.popup__features').style.display = 'none';
     }
 

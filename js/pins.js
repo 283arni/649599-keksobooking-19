@@ -109,5 +109,4 @@
     copyAds: null,
     removeAds: removeAds
   };
-
 })();
