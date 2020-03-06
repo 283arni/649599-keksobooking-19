@@ -70,7 +70,8 @@
 
   var choiсePhotos = function () {
     var files = loaderPhotos.files;
-    files.forEach(function (file) {
+
+    Array.prototype.forEach.call(files, function (file) {
       var fileName = file.name.toLowerCase();
 
       var matches = FILE_FORMATS.some(function (it) {
